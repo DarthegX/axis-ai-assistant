@@ -1,7 +1,10 @@
 import { createAgent } from "langchain";
 import { SYSTEM_PROMPT } from "./prompts.ts";
+import { getWeather, searchKnowledge } from "./tools.ts";
 
 const tools = [
+  getWeather,
+  searchKnowledge
 ];
 
 /**
