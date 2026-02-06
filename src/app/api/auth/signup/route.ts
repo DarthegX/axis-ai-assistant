@@ -1,5 +1,5 @@
 import dbConnect from "@/src/lib/db/mongodb";
-import User from "@/src/models/Uset";
+import User from "@/src/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
