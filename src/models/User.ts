@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, models } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 const UserSchema = new Schema({
   email: { type: String, unique: true, required: true },
@@ -16,6 +16,5 @@ const UserSchema = new Schema({
   }
 }, { timestamps: true });
 
-// To avoid double creation of the model
 const User = models.User || model('User', UserSchema);
 export default User;
