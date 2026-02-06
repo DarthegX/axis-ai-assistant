@@ -1,48 +1,21 @@
 "use client"
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { randomInt } from "node:crypto";
-import { useState } from "react";
-
-
 
 export default function Home() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
 
   const requestDiscogsToken = async () => {
-    const timestamp = Date.now();
-
-    const newTab = window.open("", "_blank");
-
     try {
       const discogsOauthResponse = await fetch('/api/discogs/auth', {
         method: 'GET'
       });
       const discogsAuthRedirectUrl = (await discogsOauthResponse.json()).redirectUrl;
 
-      if (newTab) {
-        newTab.location.href = discogsAuthRedirectUrl
+      if(discogsAuthRedirectUrl) {
+        window.location.href = discogsAuthRedirectUrl;
       }
 
     } catch (err) {
-      newTab?.close();
-    }
-  }
-
-  const getDiscogsAccess = async () => {
-    const timestamp = Date.now();
-
-    try {
-      const discogsOauthResponse = await fetch('/api/discogs/access', {
-        method: 'GET'
-      });
-      const discogsAuthRedirectUrl = (await discogsOauthResponse.json());
-
-      console.log(discogsAuthRedirectUrl)
-
-    } catch (err) {
-      return;
+      console.log(err)
     }
   }
 
@@ -84,21 +57,6 @@ export default function Home() {
               height={20}
             />
             Sign in
-          </button>
-
-          <button
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            rel="noopener noreferrer"
-            onClick={getDiscogsAccess}
-          >
-            <Image
-              className=""
-              src="/axis-logo/black-48.png"
-              alt="Discogs logomark"
-              width={20}
-              height={20}
-            />
-            Access
           </button>
         </div>
       </main>
