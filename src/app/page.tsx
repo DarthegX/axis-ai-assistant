@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Storage } from "../services/storage";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -15,7 +16,23 @@ export default function AuthPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    router.push('/init');
+    const action = isLogin ? 'signin' : 'signup';
+
+    try {
+      const response = await fetch('/api/auth/' + action, {
+        method: 'POST',
+        body: JSON.stringify(formData)
+      });
+
+      const body = await response.json();
+      console.log(body)
+
+      Storage.save('user', { username: body.username, email: body.email });
+      Storage.save('session_token', body.sessionToken);
+
+      router.push('/init');
+    } catch (err) { console.log('error creating user') }
+
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
