@@ -27,13 +27,6 @@ export async function GET(request: NextRequest) {
         const token = parsedTokens.get('oauth_token');
         const oauthTokenSecret = parsedTokens.get('oauth_token_secret');
 
-        (await cookies()).set('discogs_request_token', token ?? '', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 6000000000000000000000000000000000000,
-            path: '/',
-        });
-
         (await cookies()).set('discogs_token_secret', oauthTokenSecret ?? '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -41,7 +34,7 @@ export async function GET(request: NextRequest) {
             path: '/',
         });
 
-        console.log(parsedTokens)
+        console.log(oauthTokenSecret)
 
         const redirectUrl = `https://www.discogs.com/oauth/authorize?oauth_token=${token}`;
 

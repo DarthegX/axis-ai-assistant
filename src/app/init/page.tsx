@@ -1,11 +1,26 @@
 "use client"
 import Image from "next/image";
 
-export default function Home() {
-
+export default async function Home() {
     const requestDiscogsToken = async () => {
         try {
             const discogsOauthResponse = await fetch('/api/discogs/auth', {
+                method: 'GET'
+            });
+            const discogsAuthRedirectUrl = (await discogsOauthResponse.json()).redirectUrl;
+
+            if (discogsAuthRedirectUrl) {
+                window.location.href = discogsAuthRedirectUrl;
+            }
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const requestSpotifyToken = async () => {
+        try {
+            const discogsOauthResponse = await fetch('/api/spotify/auth', {
                 method: 'GET'
             });
             const discogsAuthRedirectUrl = (await discogsOauthResponse.json()).redirectUrl;
@@ -40,7 +55,7 @@ export default function Home() {
                         Dónde quieres comprar música?
                     </h1>
                     <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-                        Identifícate con una de estas plataformas.
+                        Identifícate en una de estas plataformas.
                     </p>
                 </div>
                 <div className="pl-2 flex flex-col gap-4 text-base font-medium sm:flex-row">
@@ -56,7 +71,22 @@ export default function Home() {
                             width={20}
                             height={20}
                         />
-                        Sign in
+                        Discogs
+                    </button>
+
+                    <button
+                        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+                        rel="noopener noreferrer"
+                        onClick={requestSpotifyToken}
+                    >
+                        <Image
+                            className=""
+                            src="/spotify-icon.webp"
+                            alt="Discogs logomark"
+                            width={20}
+                            height={20}
+                        />
+                        Spotify
                     </button>
                 </div>
             </main>

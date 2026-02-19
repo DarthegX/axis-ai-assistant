@@ -16,12 +16,12 @@ export async function POST(request: Request) {
         return Response.json({ error: "Verifier not found" }, { status: 400 });
     }
 
-    const signature = `${encodeURIComponent(process.env.DISCOGS_SECRET ?? '')}&${encodeURIComponent(savedSecret)}`
+    const signature = `${encodeURIComponent(process.env.DISCOGS_SECRET ?? '')}&${encodeURIComponent(savedSecret)}`;
     const authHeaders = [
         `OAuth oauth_consumer_key="${process.env.DISCOGS_KEY}"`,
         `oauth_nonce="${Date.now()}"`,
         `oauth_token="${oauthAccessToken}"`,
-        `oauth_signature="${signature}`,
+        `oauth_signature="${process.env.DISCOGS_SECRET}&"`,
         `oauth_signature_method="PLAINTEXT"`,
         `oauth_timestamp="${Math.floor(Date.now() / 1000)}"`,
         `oauth_verifier="${oauthVerifier}"`
@@ -29,9 +29,9 @@ export async function POST(request: Request) {
 
     const response = await fetch('https://api.discogs.com/oauth/access_token', {
         method: 'POST',
-        headers: { 
+        headers: {
             'Authorization': authHeaders,
-            'User-Agent': 'AxisMusic/1.0'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
         }
     });
 
@@ -57,7 +57,8 @@ export async function POST(request: Request) {
 
         const response = await fetch('https://api.discogs.com/oauth/identity?', {
             headers: {
-                'Authorization': authHeader
+                'Authorization': authHeader,
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
             }
         });
 
@@ -69,5 +70,7 @@ export async function POST(request: Request) {
         return Response.redirect(new URL('/', request.url));
     }
 
+    // Delete temporary request secret
+    cookieStore.delete('discogs_request_secret');
     return Response.json({ error: "Error final en el intercambio" });
 }
